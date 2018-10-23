@@ -23,22 +23,22 @@ public class ImageBuilder
         SaveImage(colors, w, h);
     }
 
-    public static void SaveImage(Vec3[] c, int w, int h)
+    public static void SaveImage(Vec3[] c, int w, int h, string name = "output")
     {
         Color[] colors = new Color[w * h];
         for (int i = 0; i < w * h; i++)
         {
             colors[i] = new Color(c[i].r, c[i].g, c[i].b, 1f);
         }
-        SaveImage(colors, w, h);
+        SaveImage(colors, w, h, name);
     }
 
-    public static void SaveImage(Color[] colors, int w, int h)
+    public static void SaveImage(Color[] colors, int w, int h, string name = "output")
     {
         var tex = new Texture2D(w, h, TextureFormat.RGBAFloat, false, true);
         tex.SetPixels(colors);
         byte[] bytes = tex.EncodeToPNG();
-        var path = AssetDatabase.GenerateUniqueAssetPath("./Assets/output.png");
+        var path = AssetDatabase.GenerateUniqueAssetPath(string.Format("./Assets/{0}.png", name));
         File.WriteAllBytes(path, bytes);
         AssetDatabase.ImportAsset(path, ImportAssetOptions.Default);
         AssetDatabase.Refresh();

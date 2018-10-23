@@ -61,7 +61,15 @@ public struct Vec3
     {
         return new Vec3(a.x - b.x, a.y - b.y, a.z - b.z);
     }
-    public static Vec3 operator *(Vec3 a, float s)
+	public static Vec3 operator -(Vec3 a, float s)
+	{
+		return new Vec3(a.x - s, a.y - s, a.z - s);
+	}
+	public static Vec3 operator -(float s, Vec3 a)
+	{
+		return new Vec3(a.x - s, a.y - s, a.z - s);
+	}
+	public static Vec3 operator *(Vec3 a, float s)
     {
         return new Vec3(a.x * s, a.y * s, a.z * s);
     }
@@ -93,6 +101,29 @@ public struct Vec3
             a.x * b.y - a.y * b.x
         );
     }
+	public static Vec3 Reflect(Vec3 v, Vec3 n)
+	{
+		// nは単位ベクトルであること
+		return v - 2f * Dot(v, n) * n;
+	}
+	public static bool Refract(Vec3 v, Vec3 n, float niOverNt, ref Vec3 refracted)
+	{
+
+	}
+
+	public static Vec3 randomInUnitSphere
+	{
+		get
+		{
+			Vec3 p;
+			do
+			{
+				p = (2f * new Vec3(Random.value, Random.value, Random.value)) - 1f;
+			} while (p.sqrLength >= 1f);
+			return p;
+		}
+	}
+
 
     public float length { get { return Mathf.Sqrt(x * x + y * y + z * z); } }
     public float sqrLength { get { return x * x + y * y + z * z; } }
