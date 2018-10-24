@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEditor;
 
-public class RayTrace009
+public class RayTrace012
 {
 	public static readonly Vec3 BG_TOP = new Vec3(0.5f, 0.7f, 1f);
+	// public static readonly Vec3 BG_TOP = new Vec3(0f, 0f, 0f);
 	public static readonly Vec3 BG_BOTTOM = new Vec3(1f, 1f, 1f);
 
 	public static Vec3 BGColor(Ray ray, HitableList world, int depth)
@@ -31,21 +32,37 @@ public class RayTrace009
 		}
 	}
 
-	[MenuItem("ImageBuilder/RayTrace009")]
+	[MenuItem("ImageBuilder/RayTrace012")]
 	public static void Test001()
 	{
 		var sw = System.Diagnostics.Stopwatch.StartNew();
 
 		var w = 512;
 		var h = 256;
+
+		// var w = 256;
+		// var h = 128;
+
 		var ns = 10;
 
-		var cam = new Camera();
+		// var cam = new Camera();
+		// var cam = new Camera(90f, w / h);
+		var lookfrom = new Vec3(1f, 1f, 0f);
+		var lookat = new Vec3(0f, 0f, 1f);
+		var focusDist = (lookfrom - lookat).length;
+
+		var cam = new Camera(lookfrom, lookat, new Vec3(0f, 1f, 0f), 90f, w / h, 0.5f, focusDist);
 		var world = new HitableList();
+		var rot = Mathf.Cos(Mathf.PI / 4f);
+		// world.list.Add(new Sphere(new Vec3(-rot, 0f, 1f), rot, new Lambertian(new Vec3(0f, 0f, 1f))));
+		// world.list.Add(new Sphere(new Vec3(rot, 0f, 1f), rot, new Lambertian(new Vec3(1f, 0f, 0f))));
 		world.list.Add(new Sphere(new Vec3(0f, 0f, 1f), 0.5f, new Lambertian(new Vec3(0.8f, 0.3f, 0.3f))));
 		world.list.Add(new Sphere(new Vec3(0f, -100.5f, 1f), 100f, new Lambertian(new Vec3(0.8f, 0.8f, 0f))));
 		world.list.Add(new Sphere(new Vec3(1f, 0f, 1f), 0.5f, new Metal(new Vec3(0.8f, 0.6f, 0.2f), 1f)));
 		world.list.Add(new Sphere(new Vec3(-1f, 0f, 1f), 0.5f, new Metal(new Vec3(0.8f, 0.8f, 0.8f), 0.3f)));
+		// world.list.Add(new Sphere(new Vec3(-1f, 0f, 1f), 0.5f, new Dielectric(1.5f)));
+		// world.list.Add(new Sphere(new Vec3(-0.2f, -0.3f, 0.5f), 0.2f, new Dielectric(1.7f)));
+		// world.list.Add(new Sphere(new Vec3(-1f, 0f, 1f), -0.45f, new Dielectric(1.5f)));
 
 		var c = new Vec3[w * h];
 
@@ -59,7 +76,8 @@ public class RayTrace009
 				{
 					float u = (x + Random.value) / w;
 					float v = (y + Random.value) / h;
-					Ray r = cam.GetRay(u, v);
+					Ray r = cam.GetRayWithOffset(u, v);
+					// Ray r = cam.GetRay(u, v);
 					col += BGColor(r, world, 0);
 				}
 
@@ -72,6 +90,6 @@ public class RayTrace009
 		sw.Stop();
 		Debug.Log("Elapsed: " + sw.ElapsedMilliseconds);
 
-		ImageBuilder.SaveImage(c, w, h, "output_materials");
+		ImageBuilder.SaveImage(c, w, h, "output_dov");
 	}
 }
