@@ -3,6 +3,10 @@ using UnityEngine;
 public struct Vec3
 {
 	float e0, e1, e2;
+	public Vec3(float v)
+	{
+		e0 = e1 = e2 = v;
+	}
 	public Vec3(float e0, float e1, float e2)
 	{
 		this.e0 = e0;
@@ -103,16 +107,16 @@ public struct Vec3
 	}
 	public static Vec3 Reflect(Vec3 v, Vec3 n)
 	{
-		return v - 2f * Dot(v, n) * n;
+		return v - (2f * Dot(v, n)) * n;
 	}
-	public static bool Refract(Vec3 v, Vec3 n, float niOverNt, ref Vec3 refracted)
+	public static bool Refract(Vec3 v, Vec3 n, float n1OverN2, ref Vec3 refracted)
 	{
 		var uv = v.normalized;
 		var dt = Dot(uv, n);
-		var d = 1f - niOverNt * niOverNt * (1f - dt * dt);
+		var d = 1f - n1OverN2 * n1OverN2 * (1f - dt * dt);
 		if (d > 0f)
 		{
-			refracted = niOverNt * (uv - n * dt) - n * Mathf.Sqrt(d);
+			refracted = n1OverN2 * (uv - n * dt) - n * Mathf.Sqrt(d);
 			// refracted = -niOverNt * (uv - n * dt) - n * Mathf.Sqrt(d);
 			return true;
 		}
@@ -121,6 +125,15 @@ public struct Vec3
 			return false;
 		}
 	}
+	public static Vec3 Lerp(Vec3 a, Vec3 b, float t)
+	{
+		return a * (1f - t) + b * t;
+	}
+	public static Vec3 Pow(Vec3 a, float exp)
+	{
+		return new Vec3(Mathf.Pow(a.x, exp), Mathf.Pow(a.y, exp), Mathf.Pow(a.z, exp));
+	}
+
 	public static Vec3 randomInUnitSphere
 	{
 		get
@@ -171,11 +184,13 @@ public struct Vec3
 		}
 	}
 
-	public void Normalize()
+	public void MakeUnit()
 	{
 		float k = 1f / length;
 		e0 *= k; e1 *= k; e2 *= k;
 	}
+
+
 
 	public override string ToString()
 	{
